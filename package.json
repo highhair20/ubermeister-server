@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "dependencies": {
+    "co-fs": "^1.2.0",
     "gulp": "^3.9.0",
     "koa": "^1.1.0",
     "koa-router": "^5.2.3"
