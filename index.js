@@ -22,4 +22,4 @@ router.get('/devices/:id', function* (){
 
 app.use(router.routes());
 
-app.listen(process.env.PORT || 5000);
+app.listen(process.env.PORT || 3000);
