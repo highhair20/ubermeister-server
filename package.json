@@ -9,7 +9,7 @@
   "devDependencies": {},
 
   "engines": {
-    "node": "0.12.2"
+    "node": "4.x"
   },
   "scripts": {
     "preinstall": "echo Installing powerbank app",
