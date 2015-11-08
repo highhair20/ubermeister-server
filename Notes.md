@@ -8,7 +8,7 @@ git init
 heroku create
 ```
 In this case the app is created at the following endpoint:
- https://nameless-wave-8608.herokuapp.com/devices
+ https://nameless-wave-8608.herokuapp.com
 
 Ignore node_modules.
 ```
