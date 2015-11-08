@@ -1,0 +1,24 @@
+{
+  "name": "protected-harbor-3410",
+  "version": "1.0.0",
+  "main": "index.js",
+  "dependencies": {
+    "gulp": "^3.9.0",
+    "koa": "^1.1.0"
+  },
+  "devDependencies": {},
+
+  "engines": {
+    "node": "0.12.2"
+  },
+  "scripts": {
+    "preinstall": "echo Installing powerbank app",
+    "start": "node --harmony index.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "postinstall": "echo Installation complete!"
+  },
+
+  "author": "Jason Kelly",
+  "license": "ISC",
+  "description": ""
+}
