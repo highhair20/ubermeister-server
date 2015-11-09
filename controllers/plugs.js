@@ -4,7 +4,10 @@ var parse = require('co-body');
 var monk = require('monk');
 var wrap = require('co-monk');
 // var db = monk('localhost/powerbank');
-var db = monk('ds053164.mongolab.com:53164/heroku_03lb5q27');
+var db = monk('ds053164.mongolab.com:53164/heroku_03lb5q27', {
+  username : 'admin',
+  password : 'foomanchu'
+});
 var co = require('co');
 
 var plugs = wrap(db.get('plugs'));
