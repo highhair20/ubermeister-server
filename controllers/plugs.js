@@ -5,8 +5,8 @@ var monk = require('monk');
 var wrap = require('co-monk');
 // var db = monk('localhost/powerbank');
 var db = monk('ds053164.mongolab.com:53164/heroku_03lb5q27', {
-  username : 'admin',
-  password : 'foomanchu'
+  username : 'foo',
+  password : 'bar'
 });
 var co = require('co');
 
