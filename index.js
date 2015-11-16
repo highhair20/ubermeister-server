@@ -39,7 +39,7 @@ router.get('/plugs/:id', plugs.read);
 router.put('/plugs/:id', plugs.update);
 
 // DELETE /plugs/:id -> Removes the book with the specified ID.
-// router.delete('/plugs/:id', plugs.delete);
+router.delete('/plugs/:id', plugs.remove);
 
 // use the router
 app.use(router.routes());

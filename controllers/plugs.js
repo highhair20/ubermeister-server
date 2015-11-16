@@ -44,7 +44,11 @@ module.exports.home = function * home(next) {
 module.exports.list = function * list(next) {
   if ('GET' != this.method) return yield next;
   var domain = this.request.origin;
-  var plugData = yield plugs.find({});
+  var plugData = yield plugs.find(
+    {},
+    {
+      "sort" : "position"
+    });
   for (var i = 0; i < plugData.length; i++) {
     plugData[i].links = [
       {
@@ -66,7 +70,7 @@ module.exports.list = function * list(next) {
 
 //
 // create a new plug
-module.exports.create = function * create(data,next) {
+module.exports.create = function * create(next) {
   if ('POST' != this.method) return yield next;
   var domain = this.request.origin;
   var plug = yield parse(this, {
@@ -161,7 +165,7 @@ module.exports.read = function * read(next) {
 
 //
 // update an existing plug
-module.exports.update = function * update(data,next) {
+module.exports.update = function * update(next) {
   if ('PUT' != this.method) return yield next;
   var domain = this.request.origin;
   var plug = yield parse(this, {
@@ -225,26 +229,15 @@ module.exports.update = function * update(data,next) {
 
 //
 //
-// module.exports.delete = function * delete(id,next) {
-//   if ('DELETE' != this.method) return yield next;
-//
-//   // var book = yield books.find({}, {
-//   //   'skip': id - 1,
-//   //   'limit': 1
-//   // });
-//   //
-//   // if (book.length === 0) {
-//   //   this.throw(404, 'book with id = ' + id + ' was not found');
-//   // }
-//   //
-//   // var removed = books.remove(book[0]);
-//   //
-//   // if (!removed) {
-//   //   this.throw(405, "Unable to delete.");
-//   // } else {
-//   //   this.body = "Done";
-//   // }
-//   this.body = {
-//     'status': 0
-//   };
-// };
+module.exports.remove = function * remove(next) {
+  if ('DELETE' != this.method) return yield next;  
+  var removed = plugs.remove({ _id: this.id }, function (err) {
+    console.log(err);
+  });
+  console.log(removed);
+  if (!removed) {
+    this.throw(405, "Unable to delete.");
+  } else {
+    this.body = "Done";
+  }
+};
