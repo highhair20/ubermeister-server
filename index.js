@@ -3,40 +3,48 @@ var plugs = require('./controllers/plugs.js');
 var compress = require('koa-compress');
 var logger = require('koa-logger');
 var koa = require('koa');
-var route = require('koa-route');
+var router = require('koa-router')();
 var app = module.exports = koa();
 
 // Logger
 app.use(logger());
 
+// error handling
+app.use(function *(next) {
+  try {
+    yield next;
+  } catch (err) {
+    this.status = err.status || 500;
+    this.body = err.message;
+    this.app.emit('error', err, this);
+  }
+});
+
+// register params
+router.param('id', plugs.registerId);
+
 // GET / -> List all links available.
-// OPTIONS / -> Gives the list of allowed request types.
-// HEAD / -> HTTP headers only, no body.
-// TRACE / -> Blocked for security reasons.
-app.use(route.get('/', plugs.home));
+router.get('/', plugs.home);
 
 // GET /plugs -> List all the books in JSON.
-app.use(route.get('/plugs/', plugs.all));
+router.get('/plugs/', plugs.list);
 
-// POST /plugs/ -> JSON data to inserted to the books db.
-app.use(route.post('/plugs/', plugs.add));
+// POST /plugs/ -> JSON data to inserted to the plugs db.
+router.post('/plugs/', plugs.create);
 
-// GET /plugs/:id -> Returns the book for the given ID
+// GET /plugs/:id -> Returns the plug for the given ID
+router.get('/plugs/:id', plugs.read);
 
 // PUT /plugs/:id -> JSON data to update the book data.
+router.put('/plugs/:id', plugs.update);
+
 // DELETE /plugs/:id -> Removes the book with the specified ID.
+// router.delete('/plugs/:id', plugs.delete);
 
+// use the router
+app.use(router.routes());
 
-
-// router.get('/plugs', function* (){
-//     this.body = yield data.plugs.get();
-// });
-// router.get('/plugs/:id', function* (){
-//     this.body = yield data.plugs.get();
-// });
-// app.use(router.routes());
-
-// Compress
+// Compress the response
 app.use(compress());
 
 // listen
