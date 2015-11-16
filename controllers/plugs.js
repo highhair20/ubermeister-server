@@ -196,7 +196,30 @@ module.exports.update = function * update(data,next) {
       ]
     };
   } catch (err) {
-    console.log(err);
+    var httpStatus, errType, errCode, errMessage;
+    for (let prop in err) {
+      switch (prop) {
+        case 'code':
+          errCode = err[prop];
+          break;
+        case 'err':
+          errMessage = err[prop];
+          break;
+        default:
+          errType = err[prop];
+          break;
+      }
+    }
+    if (errCode == 11000) {
+      // MongoError, E11000, heroku_03lb5q27.plugs.$position
+      this.status = 409;  // conflict
+      this.body = 'Unable to create new plug data.  A plug already exists for position: ' + plug.position.toString();
+    } else if (typeof errMessage !== 'undefined') {
+      this.status = 500;
+      this.body = errMessage.toString();
+    }
+    //delegate the error back to application
+    this.app.emit('error', err, this);
   }
 };
 
