@@ -87,7 +87,7 @@ module.exports.create = function * create(next) {
   try {
     var inserted = yield plugs.insert(plug);
     if (!inserted) {
-      this.throw(405, "The record couldn't be added.");
+      this.throw(400, "The record couldn't be added for an unknown reason.");
     }
     console.log('created new record: ' + inserted._id);
     this.status = 201; // created
@@ -145,6 +145,7 @@ module.exports.read = function * read(next) {
     if (plug === null) {
       this.throw(404, 'plug with id = ' + this.id + ' was not found');
     }
+    this.status = 200;
     this.body = {
       'links' :[
         {
@@ -159,7 +160,7 @@ module.exports.read = function * read(next) {
       'content' : plug
     };
   } else {
-    this.throw(404, 'unable to process request');
+    this.throw(400, 'Missing identifier.');
   }
 };
 
@@ -184,21 +185,10 @@ module.exports.update = function * update(next) {
       });
     console.log('num rows updated: ' + updated);
     if (!updated) {
-      this.throw(405, "The record couldn't be updated.");
+      this.throw(404, "Record was not found.");
     }
-    this.status = 201; // updated
-    this.body = {
-      'links' :[
-        {
-          'rel' : 'self',
-          'href' : domain.concat('/plugs/').concat(this.id)
-        },
-        {
-          'rel' : 'list',
-          'href' : domain.concat('/plugs')
-        }
-      ]
-    };
+    this.status = 204; // updated with no response
+    this.body = 'Done';
   } catch (err) {
     var httpStatus, errType, errCode, errMessage;
     for (let prop in err) {
@@ -230,14 +220,8 @@ module.exports.update = function * update(next) {
 //
 //
 module.exports.remove = function * remove(next) {
-  if ('DELETE' != this.method) return yield next;  
-  var removed = plugs.remove({ _id: this.id }, function (err) {
-    console.log(err);
-  });
-  console.log(removed);
-  if (!removed) {
-    this.throw(405, "Unable to delete.");
-  } else {
-    this.body = "Done";
-  }
+  if ('DELETE' != this.method) return yield next;
+  var removed = plugs.remove({ _id: this.id });
+  this.status = 204;  // No Content - item was deleted
+  this.body = "Done";
 };
