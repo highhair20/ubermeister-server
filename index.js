@@ -20,9 +20,6 @@ app.use(function *(next) {
   }
 });
 
-// register params
-router.param('id', plugs.registerId);
-
 // GET / -> List all links available.
 router.get('/', plugs.home);
 

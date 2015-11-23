@@ -15,7 +15,13 @@
     "mongodb": "^1.4.39",
     "monk": "^1.0.1"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "co-mocha": "^1.1.2",
+    "co-supertest": "0.0.10",
+    "mocha": "^2.3.4",
+    "should": "^7.1.1",
+    "supertest": "^1.1.0"
+  },
   "engines": {
     "node": "4.x"
   },

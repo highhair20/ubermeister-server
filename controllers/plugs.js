@@ -15,13 +15,6 @@ co(function * () {
 
 //
 //
-module.exports.registerId = function * registerId(id, next) {
- this.id = id;
- yield next;
-}
-
-//
-//
 module.exports.home = function * home(next) {
   if ('GET' != this.method) return yield next;
   var domain = this.request.origin;
@@ -29,11 +22,15 @@ module.exports.home = function * home(next) {
     'links' : [
       {
         'rel' : 'self',
-        'href' : domain
+        'href' : domain.concat('/')
       },
       {
-        'rel' : 'list',
-        'href' : domain.concat('/plugs')
+        'rel' : 'users',
+        'href' : domain.concat('/users')
+      },
+      {
+        'rel' : 'controllers',
+        'href' : domain.concat('/controllers')
       }
     ]
   };
@@ -139,11 +136,11 @@ module.exports.create = function * create(next) {
 module.exports.read = function * read(next) {
   if ('GET' != this.method) return yield next;
   var domain = this.request.origin;
-  if(typeof this.id !== undefined) {
-    var plug = yield plugs.findById(this.id);
+  if(typeof this.params.id !== undefined) {
+    var plug = yield plugs.findById(this.params.id);
     console.log('plug: ', plug);
     if (plug === null) {
-      this.throw(404, 'plug with id = ' + this.id + ' was not found');
+      this.throw(404, 'plug with id = ' + this.params.id + ' was not found');
     }
     this.status = 200;
     this.body = {
@@ -176,7 +173,7 @@ module.exports.update = function * update(next) {
   console.log('plug: ', plug);
   try {
     var updated = yield plugs.update(
-      { _id: this.id },
+      { _id: this.params.id },
       { $set:
         {
           position: plug.position,
@@ -221,7 +218,7 @@ module.exports.update = function * update(next) {
 //
 module.exports.remove = function * remove(next) {
   if ('DELETE' != this.method) return yield next;
-  var removed = plugs.remove({ _id: this.id });
+  var removed = plugs.remove({ _id: this.params.id });
   this.status = 204;  // No Content - item was deleted
   this.body = "Done";
 };

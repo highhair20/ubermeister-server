@@ -22,3 +22,32 @@ Open the app in your default browser.
 ```
 $ heroku open
 ```
+
+## Project Design
+
+REST url example from github
+
+- user_url: https://api.github.com/users/highhair20
+- commits_url: https://api.github.com/repos/highhair20/glo/commits{/sha}
+
+Extending the above example we would have the following:
+- list of users: /users - NOT FOUND
+- user data:   /users/{userId}
+- devices by user: /devices/{userId}
+- specific device: /devices/{userId}/{deviceId}
+- list of controllers: /controllers/{userId}
+- list of sockets: /sockets/{userId}/{controllerId}/
+- specific socket: /sockets/{userId}/{controllerId}/{socketId}
+
+
+Full list of urls:
+
+Home - show possible actions (/users, /controllers)
+- GET /
+
+Users
+- GET /users - list all users
+- GET /users/{userId} - get a single user
+- POST /users - Create a single user
+- PUT /users/{userId} - update a single user
+- DELETE /users/{userId} - remove a single user
