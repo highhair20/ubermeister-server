@@ -24,6 +24,9 @@ app.use(function *(next) {
 // GET / -> List all links available.
 router.get('/', root.home);
 
+// GET /users -> list all users
+router.get('/users/', users.list);
+
 // GET /plugs -> List all the books in JSON.
 router.get('/plugs/', plugs.list);
 
