@@ -1,4 +1,5 @@
 'use strict';
+var root = require('./controllers/root.js');
 var plugs = require('./controllers/plugs.js');
 var compress = require('koa-compress');
 var logger = require('koa-logger');
@@ -21,7 +22,7 @@ app.use(function *(next) {
 });
 
 // GET / -> List all links available.
-router.get('/', plugs.home);
+router.get('/', root.home);
 
 // GET /plugs -> List all the books in JSON.
 router.get('/plugs/', plugs.list);
