@@ -13,7 +13,8 @@
     "koa-logger": "^1.3.0",
     "koa-router": "^5.2.3",
     "mongodb": "^1.4.39",
-    "monk": "^1.0.1"
+    "monk": "^1.0.1",
+    "validate.js": "^0.9.0"
   },
   "devDependencies": {
     "co-mocha": "^1.1.2",
