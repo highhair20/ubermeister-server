@@ -28,6 +28,9 @@ router.get('/', root.home);
 // GET /users -> list all users
 router.get('/users/', users.list);
 router.post('/users/', users.create);
+router.get('/users/:id', users.read);
+router.put('/users/:id', users.update);
+router.delete('/users/:id', users.remove);
 
 // GET /plugs -> List all the books in JSON.
 router.get('/plugs/', plugs.list);
