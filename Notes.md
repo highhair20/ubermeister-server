@@ -51,3 +51,15 @@ Users
 - POST /users - Create a single user
 - PUT /users/{userId} - update a single user
 - DELETE /users/{userId} - remove a single user
+
+
+
+
+'controller_id' : '5C5E3CDC-05FF-4014-9E28-F05C08319521',
+'zone' : {
+  id : 1,
+  status : on
+},
+'zone' : {
+  schedule
+}

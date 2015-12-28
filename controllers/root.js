@@ -14,10 +14,6 @@ module.exports.home = function * home(next) {
       {
         'rel' : 'users',
         'href' : domain.concat('/users')
-      },
-      {
-        'rel' : 'controllers',
-        'href' : domain.concat('/controllers')
       }
     ]
   };

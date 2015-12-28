@@ -8,15 +8,13 @@ var validate = require('validate.js');
 var db = monk('admin:foomanchu@ds053164.mongolab.com:53164/heroku_03lb5q27');
 var users = wrap(db.get('users'));
 
-// From lifeofjs
-co(function * () {
-  var users = yield users.find({});
-});
-
 //
 // list all
 module.exports.list = function* list(next) {
+  // validate
   if ('GET' != this.method) return yield next;
+
+  // process
   var domain = this.request.origin;
   var userData = yield users.find(
     {},
@@ -27,7 +25,13 @@ module.exports.list = function* list(next) {
     userData[i].links = [
       {
         'rel' : 'self',
-        'href' : domain.concat('/users/').concat(userData[i]._id.toString())
+        'href' : domain.concat('/users/').concat(userData[i].username)
+      },
+      {
+        'rel' : 'controllers',
+        'href' : domain.concat('/users/')
+                       .concat(userData[i].username)
+                       .concat('/controllers')
       }
     ]
   }
@@ -45,14 +49,13 @@ module.exports.list = function* list(next) {
 //
 // create a new plug
 module.exports.create = function* create(next) {
+  // validate
   if ('POST' != this.method) return yield next;
   var domain = this.request.origin;
   var payload = yield parse(this, {
     limit: '1kb',
     strict: false
   });
-  // console.log(payload);
-
   var constraints = {
     username: {
       presence: { message: "cannot be blank" }
@@ -68,6 +71,7 @@ module.exports.create = function* create(next) {
     return;
   }
 
+  // process
   try {
     var inserted = yield users.insert(payload);
     if (!inserted) {
@@ -79,11 +83,14 @@ module.exports.create = function* create(next) {
       'links' :[
         {
           'rel' : 'self',
-          'href' : domain.concat('/users/').concat(payload.username)
+          'href' : domain.concat('/users/')
+                         .concat(payload.username)
         },
         {
-          'rel' : 'list',
-          'href' : domain.concat('/users')
+          'rel' : 'controllers',
+          'href' : domain.concat('/users/')
+                         .concat(payload.username)
+                         .concat('/controllers')
         }
       ],
       'content' : {
@@ -121,43 +128,55 @@ module.exports.create = function* create(next) {
 //
 // get the details of a specific record
 module.exports.read = function* read(next) {
+  // validate
   if ('GET' != this.method) return yield next;
-  var domain = this.request.origin;
-  if(typeof this.params.id !== undefined) {
-    var user = yield users.findOne({ username : this.params.id});
-    console.log('user: ', user);
-    if (user === null) {
-      this.throw(404, 'user with id = ' + this.params.id + ' was not found');
-    }
-    this.status = 200;
-    this.body = {
-      'links' :[
-        {
-          'rel' : 'self',
-          'href' : domain.concat('/user/').concat(user._id)
-        },
-        {
-          'rel' : 'list',
-          'href' : domain.concat('/user')
-        }
-      ],
-      'content' : user
-    };
-  } else {
-    this.throw(400, 'Missing identifier.');
+  if(typeof this.params.id == "undefined") {
+    this.status = 400;
+    this.body = 'Missing identifier.';
+    return;
   }
+
+  // process
+  var domain = this.request.origin;
+  var user = yield users.findOne({ username : this.params.id});
+  console.log('user: ', user);
+  if (user === null) {
+    this.status = 404;
+    this.body = 'user with id = ' + this.params.id + ' was not found';
+    return;
+  }
+  this.status = 200;
+  this.body = {
+    'links' :[
+      {
+        'rel' : 'self',
+        'href' : domain.concat('/user/')
+                       .concat(user.username)
+      },
+      {
+        'rel' : 'controllers',
+        'href' : domain.concat('/users/')
+                       .concat(user.username)
+                       .concat('/controllers')
+      }
+    ],
+    'content' : user
+  };
 };
 
 //
 // update an existing plug
 module.exports.update = function * update(next) {
+  // validate
   if ('PUT' != this.method) return yield next;
-  var domain = this.request.origin;
   var payload = yield parse(this, {
     limit: '1kb',
     strict: false
   });
   // console.log('payload: ', payload);
+
+  // process
+  var domain = this.request.origin;
   var updated = yield users.update(
     { username: this.params.id },
     { $set:
@@ -167,10 +186,12 @@ module.exports.update = function * update(next) {
     });
   // console.log('num rows updated: ' + updated);
   if (!updated) {
-    this.throw(404, "Record was not found.");
+    this.status = 404;
+    this.body = "Record was not found.";
+  } else {
+    this.status = 204; // updated with no response
+    this.body = 'Done';
   }
-  this.status = 204; // updated with no response
-  this.body = 'Done';
 };
 
 //

@@ -1,3 +1,3 @@
-# PowerBank Server
+# PoweeMeister Server
 
-RESTful API for the powerbank-client for setting and getting state of the plugs.
+RESTful API for the powermeister-client for setting and getting state of the plugs.
